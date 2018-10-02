@@ -647,7 +647,7 @@ PlayerSettings:
   cloudServicesEnabled:
     UNet: 1
   facebookSdkVersion: 7.9.4
-  apiCompatibilityLevel: 2
+  apiCompatibilityLevel: 3
   cloudProjectId: fb3bcf1d-df7a-42f5-928a-b3cb419f542e
   projectName: TP1
   organizationId: guillaume-lavoie-harvey
