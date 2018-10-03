@@ -11,6 +11,11 @@ public class PlayerController : MonoBehaviour {
 
     public float DefaultMaxSpeed = 50f;
     public float DefaultMaxBackSpeed = -10f;
+
+    public float dashSpeed = 30f;
+    public float dashStrength = 20f;
+    private bool isDashing = false;
+
     private float currentSpeed;
 
     private bool onGround = false;
@@ -37,7 +42,7 @@ public class PlayerController : MonoBehaviour {
     private void HandleInputs()
     {
         if (onGround)
-            rb.AddForce(transform.right * Input.GetAxis("Horizontal") * 20f);
+            rb.AddForce(Vector2.right * Input.GetAxis("Horizontal") * 20f);
         else
             transform.Rotate(0, 0, 2 * Input.GetAxis("Vertical"));
 
@@ -47,6 +52,18 @@ public class PlayerController : MonoBehaviour {
             ++numJumps;
             rb.AddForce(this.transform.up * 500f);
 
+        }
+
+        if (Input.GetButtonDown("Dash"))
+        {
+            if (!isDashing)
+            {
+                Dash(true);
+            }
+        }
+        if (Input.GetButtonUp("Dash"))
+        {
+            Dash(false);
         }
 
     }
@@ -75,6 +92,31 @@ public class PlayerController : MonoBehaviour {
             onGround = true;
             numJumps = 0;
         }
+    }
+
+    private void Dash(bool starting)
+    {
+        if (starting)
+        {
+            isDashing = true;
+            maxSpeed += dashSpeed;
+            StartCoroutine(Dash());
+        }
+        else
+        {
+            isDashing = false;
+            maxSpeed -= dashSpeed;
+            StopCoroutine(Dash());
+        }
+        
+
+        
+    }
+
+    IEnumerator Dash()
+    {
+        rb.AddForce(Vector2.right * (dashStrength + (maxSpeed - currentSpeed)));
+        yield return new WaitForFixedUpdate();
     }
 
     public float MaxSpeed
