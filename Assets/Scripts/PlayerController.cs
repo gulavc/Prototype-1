@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     Rigidbody2D rb;
+    public GameObject[] wheels;
 
     float maxSpeed, maxBackSpeed;
 
@@ -15,6 +16,9 @@ public class PlayerController : MonoBehaviour {
     public float dashSpeed = 30f;
     public float dashStrength = 20f;
     private bool isDashing = false;
+    private bool isDashDecreasing = false;
+    public float boostDecreaseTime = 1.5f;
+    private float dashMaxSpeedLeft;
 
     private float currentSpeed;
 
@@ -22,8 +26,13 @@ public class PlayerController : MonoBehaviour {
     public int MAX_JUMPS = 2;
     private int numJumps;
 
-	// Use this for initialization
-	void Start () {
+    public GameObject jumpFlames;
+    public GameObject dashFlames;
+
+    public float wheelTurnFactor = 10f;
+
+    // Use this for initialization
+    void Start () {
         rb = this.gameObject.GetComponent<Rigidbody2D>();
         maxSpeed = DefaultMaxSpeed;
         maxBackSpeed = DefaultMaxBackSpeed;
@@ -36,6 +45,10 @@ public class PlayerController : MonoBehaviour {
         HandleInputs();
 
         ManageSpeed();
+
+        HandleDashReset();
+
+        SpinWheels();
 	}
 
     //Handles the management of input controls;
@@ -58,12 +71,19 @@ public class PlayerController : MonoBehaviour {
         {
             if (!isDashing)
             {
-                Dash(true);
+                isDashing = true;
+                isDashDecreasing = false;
+                maxSpeed += dashSpeed - dashMaxSpeedLeft;
+                dashFlames.SetActive(true);                
             }
         }
         if (Input.GetButtonUp("Dash"))
         {
-            Dash(false);
+            isDashing = false;
+            isDashDecreasing = true;
+            dashMaxSpeedLeft = dashSpeed;
+            dashFlames.SetActive(false);
+
         }
 
     }
@@ -73,9 +93,14 @@ public class PlayerController : MonoBehaviour {
     {
         currentSpeed = rb.velocity.x;
 
-        if (currentSpeed > maxSpeed)
+        if (isDashing)
         {
-            rb.AddForce(-transform.right * Mathf.Pow((currentSpeed - maxSpeed), 2));
+            rb.AddForce(transform.right * (dashStrength + (maxSpeed - currentSpeed)));
+        }
+
+        if (currentSpeed > maxSpeed)
+        {            
+            rb.AddForce(-transform.right * Mathf.Pow(maxSpeed - currentSpeed, 2));
         }
         if (currentSpeed < maxBackSpeed)
         {
@@ -94,29 +119,26 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void Dash(bool starting)
+    private void HandleDashReset()
     {
-        if (starting)
-        {
-            isDashing = true;
-            maxSpeed += dashSpeed;
-            StartCoroutine(Dash());
+        if (isDashDecreasing) {
+            float decrease = ((dashSpeed / boostDecreaseTime) * Time.deltaTime);
+            dashMaxSpeedLeft -= decrease;
+            maxSpeed -= decrease;
+            if (dashMaxSpeedLeft <= 0)
+            {
+                isDashDecreasing = false;
+                maxSpeed += (-dashMaxSpeedLeft); //In order to correct for slight over-slowing
+            }
         }
-        else
-        {
-            isDashing = false;
-            maxSpeed -= dashSpeed;
-            StopCoroutine(Dash());
-        }
-        
-
-        
     }
 
-    IEnumerator Dash()
+    private void SpinWheels()
     {
-        rb.AddForce(Vector2.right * (dashStrength + (maxSpeed - currentSpeed)));
-        yield return new WaitForFixedUpdate();
+        foreach(GameObject w in wheels)
+        {
+            w.transform.Rotate(0, 0, -currentSpeed * wheelTurnFactor * Time.deltaTime);
+        }
     }
 
     public float MaxSpeed
