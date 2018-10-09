@@ -95,7 +95,7 @@ public class PlayerController : MonoBehaviour {
 
         if (isDashing)
         {
-            rb.AddForce(transform.right * (dashStrength + (maxSpeed - currentSpeed)));
+            rb.AddForce(transform.right * (dashStrength + (maxSpeed - currentSpeed)) * Mathf.Cos(transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
         }
 
         if (currentSpeed > maxSpeed)
