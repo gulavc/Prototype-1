@@ -29,7 +29,15 @@ public class PlayerController : MonoBehaviour {
     public GameObject jumpFlames;
     public GameObject dashFlames;
 
+    public ParticleSystem smoke;
+    private ParticleSystem.EmissionModule smokeEmitter;
+    private ParticleSystem.Particle smokeParticle;
+    public float smokeMinRate = 0.5f;
+    public float smokeMaxRate = 5f;
+
     public float wheelTurnFactor = 10f;
+
+    private AnimationManager animator;
 
     // Use this for initialization
     void Start () {
@@ -38,6 +46,9 @@ public class PlayerController : MonoBehaviour {
         maxBackSpeed = DefaultMaxBackSpeed;
         numJumps = 0;
 
+        smokeEmitter = smoke.emission;
+        //smokeParticle = smoke.Par
+        animator = GetComponent<AnimationManager>();
     }
 	
 	// Update is called once per frame
@@ -49,6 +60,8 @@ public class PlayerController : MonoBehaviour {
         HandleDashReset();
 
         SpinWheels();
+
+        ManageSmoke();
 	}
 
     //Handles the management of input controls;
@@ -57,7 +70,13 @@ public class PlayerController : MonoBehaviour {
         if (onGround)
             rb.AddForce(Vector2.right * Input.GetAxis("Horizontal") * 20f);
         else
-            transform.Rotate(0, 0, 2 * Input.GetAxis("Vertical"));
+        {
+            //transform.Rotate(0, 0, 2 * Input.GetAxis("Vertical"));
+            if (Mathf.Abs(Input.GetAxis("Vertical")) > 0.5f)
+            {
+                animator.Backflip();
+            }
+        }
 
         if (Input.GetButtonDown("Jump") && (onGround || numJumps < MAX_JUMPS))
         {
@@ -95,7 +114,7 @@ public class PlayerController : MonoBehaviour {
 
         if (isDashing)
         {
-            rb.AddForce(transform.right * (dashStrength + (maxSpeed - currentSpeed)) * Mathf.Cos(transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
+            rb.AddForce(Vector3.right * (dashStrength + (maxSpeed - currentSpeed)) * Mathf.Cos(transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
         }
 
         if (currentSpeed > maxSpeed)
@@ -141,6 +160,13 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void ManageSmoke()
+    {
+        smokeEmitter.rateOverTime = Mathf.Lerp(smokeMinRate, smokeMaxRate, (currentSpeed / maxSpeed));
+        
+    }
+
+    //Gettersd & setters
     public float MaxSpeed
     {
         get; set;
@@ -149,6 +175,14 @@ public class PlayerController : MonoBehaviour {
     public float MaxBackSpeed
     {
         get; set;
+    }
+
+    public float CurrentSpeed
+    {
+        get
+        {
+            return currentSpeed;
+        }
     }
 
 }
