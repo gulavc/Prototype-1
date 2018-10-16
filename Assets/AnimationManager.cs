@@ -25,13 +25,13 @@ public class AnimationManager : MonoBehaviour {
         }
 	}
 
-    public void TestFunc()
-    {
-        Debug.Log("test");
-    }
-
     public void Backflip()
     {
         animator.SetTrigger("Backflip");
+    }
+
+    public void BackflipDone()
+    {
+        player.CanBackflip = true;
     }
 }

@@ -39,12 +39,15 @@ public class PlayerController : MonoBehaviour {
 
     private AnimationManager animator;
 
+    private bool canBackflip;
+
     // Use this for initialization
     void Start () {
         rb = this.gameObject.GetComponent<Rigidbody2D>();
         maxSpeed = DefaultMaxSpeed;
         maxBackSpeed = DefaultMaxBackSpeed;
         numJumps = 0;
+        canBackflip = false;
 
         smokeEmitter = smoke.emission;
         //smokeParticle = smoke.Par
@@ -72,8 +75,9 @@ public class PlayerController : MonoBehaviour {
         else
         {
             //transform.Rotate(0, 0, 2 * Input.GetAxis("Vertical"));
-            if (Mathf.Abs(Input.GetAxis("Vertical")) > 0.5f)
+            if (Mathf.Abs(Input.GetAxis("Vertical")) > 0.2f && canBackflip)
             {
+                canBackflip = false;
                 animator.Backflip();
             }
         }
@@ -83,6 +87,7 @@ public class PlayerController : MonoBehaviour {
             onGround = false;
             ++numJumps;
             rb.AddForce(this.transform.up * 500f);
+            canBackflip = true;
 
         }
 
@@ -135,6 +140,7 @@ public class PlayerController : MonoBehaviour {
         {
             onGround = true;
             numJumps = 0;
+            canBackflip = false;
         }
     }
 
@@ -185,4 +191,15 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public bool CanBackflip
+    {
+        get
+        {
+            return canBackflip;
+        }
+        set
+        {
+            canBackflip = value;
+        }
+    }
 }

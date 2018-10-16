@@ -14,14 +14,14 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 		foreach(GameObject b in backgrounds)
         {
-            b.SetActive(true);
+            //b.SetActive(true);
         }
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        statusText.text = "Current Speed: " + player.CurrentSpeed.ToString();
+        statusText.text = "Current Speed: " + Mathf.RoundToInt(player.CurrentSpeed).ToString();
 
 	}
 }
