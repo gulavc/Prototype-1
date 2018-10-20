@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour {
     public float boostDecreaseTime = 1.5f;
     private float dashMaxSpeedLeft;
 
+    public float maxBoost = 4f; //total time before boost is depleted, in seconds
+    private float currentBoost;
+
     private float currentSpeed;
 
     private bool onGround = false;
@@ -41,24 +44,34 @@ public class PlayerController : MonoBehaviour {
 
     private bool canBackflip;
 
+    private bool doJump = false;
+    private float horizontalInput;
+
     // Use this for initialization
     void Start () {
+        Time.maximumDeltaTime = 0.03f;
         rb = this.gameObject.GetComponent<Rigidbody2D>();
         maxSpeed = DefaultMaxSpeed;
         maxBackSpeed = DefaultMaxBackSpeed;
         numJumps = 0;
         canBackflip = false;
+        currentBoost = maxBoost;
 
         smokeEmitter = smoke.emission;
         //smokeParticle = smoke.Par
         animator = GetComponent<AnimationManager>();
     }
-	
-	// Update is called once per frame
-	void Update () {
-        HandleInputs();
 
+    void Update()
+    {
+        HandleInputs();
+    }
+
+    // Update is called once per frame
+    void FixedUpdate () {
         ManageSpeed();
+
+        HandleJump();
 
         HandleDashReset();
 
@@ -71,10 +84,10 @@ public class PlayerController : MonoBehaviour {
     private void HandleInputs()
     {
         if (onGround)
-            rb.AddForce(Vector2.right * Input.GetAxis("Horizontal") * 20f);
+            horizontalInput = Input.GetAxis("Horizontal");
         else
         {
-            //transform.Rotate(0, 0, 2 * Input.GetAxis("Vertical"));
+            horizontalInput = 0f;
             if (Mathf.Abs(Input.GetAxis("Vertical")) > 0.2f && canBackflip)
             {
                 canBackflip = false;
@@ -84,30 +97,20 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetButtonDown("Jump") && (onGround || numJumps < MAX_JUMPS))
         {
-            onGround = false;
-            ++numJumps;
-            rb.AddForce(this.transform.up * 500f);
-            canBackflip = true;
+            doJump = true;
 
         }
 
         if (Input.GetButtonDown("Dash"))
         {
-            if (!isDashing)
+            if (!isDashing && currentBoost > 0)
             {
-                isDashing = true;
-                isDashDecreasing = false;
-                maxSpeed += dashSpeed - dashMaxSpeedLeft;
-                dashFlames.SetActive(true);                
+                Dash(true);            
             }
         }
         if (Input.GetButtonUp("Dash"))
         {
-            isDashing = false;
-            isDashDecreasing = true;
-            dashMaxSpeedLeft = dashSpeed;
-            dashFlames.SetActive(false);
-
+            Dash(false);
         }
 
     }
@@ -117,9 +120,16 @@ public class PlayerController : MonoBehaviour {
     {
         currentSpeed = rb.velocity.x;
 
+        rb.AddForce(Vector2.right * horizontalInput * 20f);
+
         if (isDashing)
         {
             rb.AddForce(Vector3.right * (dashStrength + (maxSpeed - currentSpeed)) * Mathf.Cos(transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
+            currentBoost -= Time.fixedDeltaTime;
+            if(currentBoost <= 0f)
+            {
+                Dash(false);
+            }
         }
 
         if (currentSpeed > maxSpeed)
@@ -130,8 +140,21 @@ public class PlayerController : MonoBehaviour {
         {
             rb.AddForce(transform.right * Mathf.Pow((currentSpeed - maxBackSpeed), 2));
         }
+        
+
     }
 
+    private void HandleJump()
+    {
+        if (doJump)
+        {
+            onGround = false;
+            ++numJumps;
+            rb.AddForce(this.transform.up * 500f);
+            canBackflip = true;
+            doJump = false;
+        }
+    }
 
     //Reset jump counter for double jump
     private void OnCollisionEnter2D(Collision2D collision)
@@ -172,6 +195,23 @@ public class PlayerController : MonoBehaviour {
         
     }
 
+
+    private void Dash(bool status)
+    {
+        isDashing = status;
+        isDashDecreasing = !status;
+        if(status)
+            maxSpeed += dashSpeed - dashMaxSpeedLeft;
+        else
+            dashMaxSpeedLeft = dashSpeed;
+        dashFlames.SetActive(status);
+    }
+
+    public void AddBoost(float value)
+    {
+        currentBoost = Mathf.Clamp(currentBoost += value, 0, maxBoost);
+    }
+
     //Gettersd & setters
     public float MaxSpeed
     {
@@ -201,5 +241,20 @@ public class PlayerController : MonoBehaviour {
         {
             canBackflip = value;
         }
+    }
+
+    public float CurrentBoost {
+        get {
+            return currentBoost;
+        }
+
+        set {
+            currentBoost = value;
+        }
+    }
+
+    public float GetCurrentBoostPercent()
+    {
+        return currentBoost / maxBoost * 100f;
     }
 }

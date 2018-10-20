@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour {
 
     public GameObject[] backgrounds;
 
+    private int score = 0;
+
 	// Use this for initialization
 	void Start () {
 		foreach(GameObject b in backgrounds)
@@ -20,8 +22,24 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-        statusText.text = "Current Speed: " + Mathf.RoundToInt(player.CurrentSpeed).ToString();
-
 	}
+
+    public void BackflipDone()
+    {
+        player.CanBackflip = true;
+        AddScore(40);
+    }
+
+    public void AddScore(int value)
+    {
+        score += value;
+        //start coroutine: score popup!
+        player.AddBoost(value/100f);
+    }
+
+    public int Score {
+        get {
+            return score;
+        }
+    }
 }

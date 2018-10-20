@@ -5,6 +5,7 @@ using UnityEngine;
 public class AnimationManager : MonoBehaviour {
 
     public PlayerController player;
+    public GameManager gm;
 
     private Animator animator;
 
@@ -32,6 +33,7 @@ public class AnimationManager : MonoBehaviour {
 
     public void BackflipDone()
     {
-        player.CanBackflip = true;
+        gm.BackflipDone();
     }
+    
 }
