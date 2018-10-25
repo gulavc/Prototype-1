@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour {
     public Text speedText;
     public Text scoreText;
     public ProgressBar pb;
+    public Text hpText;
     
     private PlayerController player;
 
@@ -23,5 +24,6 @@ public class UIManager : MonoBehaviour {
         pb.BarValue = Mathf.Round(player.GetCurrentBoostPercent());
         speedText.text = "Current Speed: " + Mathf.RoundToInt(player.CurrentSpeed).ToString();
         scoreText.text = "Score: " + gm.Score;
+        hpText.text = "HP: " + gm.HP;
     }
 }
