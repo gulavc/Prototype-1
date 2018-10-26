@@ -9,6 +9,13 @@ public abstract class Trap : MonoBehaviour {
 
     public abstract void FireTrap();
 
+    public GameManager gameManager;
+
+    public void Start()
+    {
+        gameManager = GameObject.FindObjectOfType<GameManager>();
+    }
+
     public bool IsTrapTriggered {
         get {
             return isTrapTriggered;

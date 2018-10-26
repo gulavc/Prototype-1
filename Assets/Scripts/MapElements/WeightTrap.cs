@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class WeightTrap : Trap
 {
-    public GameManager gameManager;
-    public float fallSpeed = 1f;
-    
+    public float fallSpeed = 1f;   
 
     private Rigidbody2D rb;    
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }   
@@ -25,10 +23,22 @@ public class WeightTrap : Trap
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(!IsTrapDamageDone && collision.collider.transform.root.gameObject.tag == "Player")
+        if(!IsTrapDamageDone && collision.gameObject.tag == "Player")
         {
             IsTrapDamageDone = true;
             gameManager.RemoveLife();
+        }
+        if(!IsTrapDamageDone && collision.gameObject.tag == "Ground")
+        {
+            IsTrapDamageDone = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Ground")
+        {
+            IsTrapDamageDone = false;
         }
     }
 

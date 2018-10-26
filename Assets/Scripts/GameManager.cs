@@ -17,11 +17,13 @@ public class GameManager : MonoBehaviour {
     public int MaxHP = 3;
     private int hp;
 
+    private ArrayList traps;
+
 	// Use this for initialization
 	void Start () {
         hp = MaxHP;
         Random.InitState(SeedHolder.Seed);
-        Debug.Log(SeedHolder.Seed);
+        RespawnPlayer();
 	}
 	
 	// Update is called once per frame
@@ -53,11 +55,18 @@ public class GameManager : MonoBehaviour {
         if(hp <= 0)
         {
             //gameOver
+            Debug.Log("Game over");
         }
         else
         {
             RespawnPlayer();
         }
+    }
+
+    public void AddTrap(Trap t)
+    {
+        traps.Add(t);
+        t.gameManager = this;
     }
     
 
