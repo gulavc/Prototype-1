@@ -4,9 +4,6 @@ using UnityEngine;
 
 public abstract class Trap : MonoBehaviour {
 
-    private bool isTrapTriggered = false;
-    private bool isTrapDamageDone = false;
-
     public abstract void FireTrap();
 
     public GameManager gameManager;
@@ -16,23 +13,9 @@ public abstract class Trap : MonoBehaviour {
         gameManager = GameObject.FindObjectOfType<GameManager>();
     }
 
-    public bool IsTrapTriggered {
-        get {
-            return isTrapTriggered;
-        }
+    public bool IsTrapTriggered { get; set; } = false;
 
-        set {
-            isTrapTriggered = value;
-        }
-    }
+    public bool IsTrapDamageDone { get; set; } = false;
 
-    public bool IsTrapDamageDone {
-        get {
-            return isTrapDamageDone;
-        }
-
-        set {
-            isTrapDamageDone = value;
-        }
-    }
+    public bool IsTrapHit { get; set; } = false;
 }

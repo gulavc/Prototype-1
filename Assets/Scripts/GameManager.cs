@@ -8,26 +8,25 @@ public class GameManager : MonoBehaviour {
     public PlayerController player;
     public Text statusText;
 
-    public Transform spawnPoint;
+    public Transform spawnPoint;    
+
     public int MaxHP = 3;
-    private ArrayList traps;
 
     public int Score { get; private set; } = 0;
     public int HP { get; private set; }
 
     public LevelGenerator lg;
+    public GameOverUI gameOverUI;
+    public UIManager gameUI;
 
     // Use this for initialization
-    void Start () {
-        HP = MaxHP;
-        Random.InitState(SeedHolder.Seed);       
-
-        
+    void Start () {       
         StartGame();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        
 	}
 
     public void BackflipDone()
@@ -45,6 +44,7 @@ public class GameManager : MonoBehaviour {
 
     public void RespawnPlayer()
     {
+        player.enabled = true;
         player.transform.position = spawnPoint.position;
         player.ResetPosition(Vector2.zero);
         player.IsImmuneToDamage = false;
@@ -58,8 +58,7 @@ public class GameManager : MonoBehaviour {
             player.IsImmuneToDamage = true;
             if (HP <= 0)
             {
-                //gameOver
-                Debug.Log("Game over");
+                GameOver(false);
             }
             else
             {
@@ -72,10 +71,31 @@ public class GameManager : MonoBehaviour {
 
     private void StartGame()
     {
+        Random.InitState(SeedHolder.Seed);
         lg.GenerateInitialMap();
         RespawnPlayer();
+                
+        gameUI.Hide(false);
+        gameOverUI.Hide(true);
+
+        HP = MaxHP;
+        player.CurrentBoost = player.maxBoost / 2f;
     }
-    
-    
+
+    private void GameOver(bool winGame)
+    {
+        player.enabled = false;
+        gameUI.Hide(true);
+        gameOverUI.GameOver(winGame);
+    }
+
+    public void RestartGame()
+    {
+        
+        lg.ClearLevel();
+        StartGame();
+    }
+
+
 
 }

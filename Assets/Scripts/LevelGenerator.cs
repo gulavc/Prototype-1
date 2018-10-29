@@ -12,6 +12,8 @@ public class LevelGenerator : MonoBehaviour {
 
     private int fixedOrder;
 
+    private GameObject LevelHolder;
+
     // Use this for initialization
 
     void Start () {
@@ -45,6 +47,10 @@ public class LevelGenerator : MonoBehaviour {
             fixedOrder++;
             return levelPool[value];            
         }
+        else if(SeedHolder.Seed <= levelPool.Length)
+        {
+            return levelPool[SeedHolder.Seed - 1];
+        }
         else
         {
             return levelPool[Random.Range(0, levelPool.Length)];
@@ -55,6 +61,9 @@ public class LevelGenerator : MonoBehaviour {
 
     public void GenerateInitialMap()
     {
+
+        LevelHolder = new GameObject("level holder");
+
         for(int i = 0; i < 5; ++i)
         {            
             Level l = Instantiate(GetRandomLevel());
@@ -67,7 +76,8 @@ public class LevelGenerator : MonoBehaviour {
                 l.transform.position = Vector3.zero;
                 gm.spawnPoint = l.spawnPoint;
             }
-            
+
+            l.transform.parent = LevelHolder.transform;
             currentLevel.AddLast(l);
 
         }
@@ -75,11 +85,9 @@ public class LevelGenerator : MonoBehaviour {
 
     public void ClearLevel()
     {
-        foreach (Level l in currentLevel)
-        {
-            Destroy(l);            
-        }
+        Destroy(LevelHolder);
         currentLevel.Clear();
+        fixedOrder = 0;
     }
 
 }

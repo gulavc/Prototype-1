@@ -26,4 +26,9 @@ public class UIManager : MonoBehaviour {
         scoreText.text = "Score: " + gm.Score;
         hpText.text = "HP: " + gm.HP;
     }
+
+    public void Hide(bool value)
+    {
+        this.gameObject.SetActive(!value);
+    }
 }

@@ -6,7 +6,7 @@ public class BirdEnemy : MonoBehaviour {
 
 
     public float flySpeed;
-    public float lifeTime;
+    public float pathDuration;
     public float minBombInterval, maxBombInterval;
     public float bombThrowForce, bombTimerMin, bombTimerMax;
 
@@ -15,6 +15,7 @@ public class BirdEnemy : MonoBehaviour {
     public BombTrap bombPrefab;
 
     private float nextDrop;
+    private float pathTime;
 
 
 	// Use this for initialization
@@ -25,12 +26,14 @@ public class BirdEnemy : MonoBehaviour {
         }
 
         nextDrop = Random.Range(minBombInterval, maxBombInterval);
-	}
+        pathTime = pathDuration;
+        flySpeed = flyForwards ? flySpeed : -flySpeed;
+    }
 	
 	// Update is called once per frame
 	void Update () {
         nextDrop -= Time.deltaTime;
-        lifeTime -= Time.deltaTime;
+        pathTime -= Time.deltaTime;
 
         if(nextDrop <= 0)
         {
@@ -38,11 +41,12 @@ public class BirdEnemy : MonoBehaviour {
             nextDrop = Random.Range(minBombInterval, maxBombInterval);
         }
 
-        if(lifeTime <= 0)
+        if(pathTime <= 0)
         {
-            nextDrop = float.MaxValue;
-            Destroy(this.gameObject, maxBombInterval + 1);
-        }
+            pathTime = pathDuration;
+            transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            flySpeed = flyForwards ? flySpeed : -flySpeed;
+        }        
 
         transform.Translate(flySpeed, 0, 0);
 	}

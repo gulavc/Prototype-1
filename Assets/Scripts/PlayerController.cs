@@ -49,6 +49,8 @@ public class PlayerController : MonoBehaviour
 
     public bool IsImmuneToDamage { get; set; } = false;
 
+    private float currentRotationVelocity = 0;
+
     // Use this for initialization
     void Start()
     {
@@ -68,6 +70,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         HandleInputs();
+
     }
 
     // Update is called once per frame
@@ -82,6 +85,8 @@ public class PlayerController : MonoBehaviour
         SpinWheels();
 
         ManageSmoke();
+
+        DampenRotation();
     }
 
     //Handles the management of input controls;
@@ -89,9 +94,9 @@ public class PlayerController : MonoBehaviour
     {
         horizontalInput = Input.GetAxis("Horizontal");
 
-        if(!onGround)
+        if (!onGround)
         {
-            
+
             if (Mathf.Abs(Input.GetAxis("Vertical")) > 0.2f && canBackflip)
             {
                 canBackflip = false;
@@ -184,7 +189,7 @@ public class PlayerController : MonoBehaviour
         {
             onGround = false;
             canBackflip = true;
-        }        
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -221,9 +226,20 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    private void DampenRotation()
+    {
+        float newAngle = Mathf.SmoothDampAngle(transform.rotation.eulerAngles.z, 0f, ref currentRotationVelocity, 0.1f);
+        transform.rotation =
+            Quaternion.Euler(
+                transform.rotation.eulerAngles.x,
+                transform.rotation.eulerAngles.y,
+                newAngle);
+    }
+
+
     public void ResetPosition(Vector2 offset)
     {
-        this.transform.Translate(offset,Space.World);
+        this.transform.Translate(offset, Space.World);
         this.transform.rotation = Quaternion.identity;
         rb.freezeRotation = true;
         rb.freezeRotation = false;
@@ -282,5 +298,11 @@ public class PlayerController : MonoBehaviour
     public float GetCurrentBoostPercent()
     {
         return currentBoost / maxBoost * 100f;
+    }
+
+    public void Freeze()
+    {
+
+        //ignoreInputs = true;
     }
 }

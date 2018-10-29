@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flySpeed: 0.2
-  lifeTime: 10
+  pathDuration: 3
   minBombInterval: 1
   maxBombInterval: 3
   bombThrowForce: 300

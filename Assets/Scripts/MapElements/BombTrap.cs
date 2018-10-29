@@ -27,6 +27,13 @@ public class BombTrap : Trap {
         {
             countdownText.text = Mathf.FloorToInt(countdownTime).ToString();
         }
+
+        if (IsTrapHit)
+        {
+            IsTrapDamageDone = true;
+            gameManager.RemoveLife();
+            IsTrapHit = false;
+        }
 	}
 
     public override void FireTrap()
@@ -44,8 +51,7 @@ public class BombTrap : Trap {
     {
         if (!IsTrapDamageDone)
         {
-            IsTrapDamageDone = true;
-            gameManager.RemoveLife();
+            IsTrapHit = true;
         }
 
     }

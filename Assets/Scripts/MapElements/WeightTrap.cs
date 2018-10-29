@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class WeightTrap : Trap
 {
-    public float fallSpeed = 1f;   
+    public float fallSpeed = 1f;
 
-    private Rigidbody2D rb;    
+    private Rigidbody2D rb;
 
     // Use this for initialization
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-    }   
+    }
+
+    private void Update()
+    {
+        if (IsTrapHit)
+        {
+            IsTrapDamageDone = true;
+            gameManager.RemoveLife();
+            IsTrapHit = false;
+        }
+    }
 
     public override void FireTrap()
     {
@@ -25,8 +35,7 @@ public class WeightTrap : Trap
     {
         if(!IsTrapDamageDone && collision.gameObject.tag == "Player")
         {
-            IsTrapDamageDone = true;
-            gameManager.RemoveLife();
+            IsTrapHit = true;
         }
         if(!IsTrapDamageDone && collision.gameObject.tag == "Ground")
         {
