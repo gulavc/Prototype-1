@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
     public int MAX_JUMPS = 2;
     private int numJumps;
 
-    public GameObject jumpFlames;
     public GameObject dashFlames;
 
     public ParticleSystem smoke;
@@ -47,6 +46,8 @@ public class PlayerController : MonoBehaviour
 
     private bool doJump = false;
     private float horizontalInput;
+
+    public bool IsImmuneToDamage { get; set; } = false;
 
     // Use this for initialization
     void Start()
@@ -86,11 +87,11 @@ public class PlayerController : MonoBehaviour
     //Handles the management of input controls;
     private void HandleInputs()
     {
-        if (onGround)
-            horizontalInput = Input.GetAxis("Horizontal");
-        else
+        horizontalInput = Input.GetAxis("Horizontal");
+
+        if(!onGround)
         {
-            horizontalInput = 0f;
+            
             if (Mathf.Abs(Input.GetAxis("Vertical")) > 0.2f && canBackflip)
             {
                 canBackflip = false;
@@ -183,7 +184,7 @@ public class PlayerController : MonoBehaviour
         {
             onGround = false;
             canBackflip = true;
-        }
+        }        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

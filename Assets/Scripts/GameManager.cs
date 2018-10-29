@@ -8,22 +8,22 @@ public class GameManager : MonoBehaviour {
     public PlayerController player;
     public Text statusText;
 
-    public GameObject[] backgrounds;
-
     public Transform spawnPoint;
-
-    private int score = 0;
-
     public int MaxHP = 3;
-    private int hp;
-
     private ArrayList traps;
 
-	// Use this for initialization
-	void Start () {
-        hp = MaxHP;
-        Random.InitState(SeedHolder.Seed);
-        RespawnPlayer();
+    public int Score { get; private set; } = 0;
+    public int HP { get; private set; }
+
+    public LevelGenerator lg;
+
+    // Use this for initialization
+    void Start () {
+        HP = MaxHP;
+        Random.InitState(SeedHolder.Seed);       
+
+        
+        StartGame();
 	}
 	
 	// Update is called once per frame
@@ -33,12 +33,12 @@ public class GameManager : MonoBehaviour {
     public void BackflipDone()
     {
         player.CanBackflip = true;
-        AddScore(40);
+        AddScore(20);
     }
 
     public void AddScore(int value)
     {
-        score += value;
+        Score += value;
         //start coroutine: score popup!
         player.AddBoost(value/100f);
     }
@@ -47,38 +47,35 @@ public class GameManager : MonoBehaviour {
     {
         player.transform.position = spawnPoint.position;
         player.ResetPosition(Vector2.zero);
+        player.IsImmuneToDamage = false;
     }
 
     public void RemoveLife(int damage = 1)
     {
-        hp -= damage;
-        if(hp <= 0)
+        if (!player.IsImmuneToDamage)
         {
-            //gameOver
-            Debug.Log("Game over");
+            HP -= damage;
+            player.IsImmuneToDamage = true;
+            if (HP <= 0)
+            {
+                //gameOver
+                Debug.Log("Game over");
+            }
+            else
+            {
+                RespawnPlayer();
+            }
         }
-        else
-        {
-            RespawnPlayer();
-        }
+
     }
 
-    public void AddTrap(Trap t)
+
+    private void StartGame()
     {
-        traps.Add(t);
-        t.gameManager = this;
+        lg.GenerateInitialMap();
+        RespawnPlayer();
     }
     
+    
 
-    public int Score {
-        get {
-            return score;
-        }
-    }
-
-    public int HP {
-        get {
-            return hp;
-        }
-    }
 }
