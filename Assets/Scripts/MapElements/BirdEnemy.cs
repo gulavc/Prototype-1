@@ -17,12 +17,19 @@ public class BirdEnemy : MonoBehaviour {
     private float nextDrop;
     private float pathTime;
 
+    private SpriteRenderer[] sr;
 
 	// Use this for initialization
 	void Start () {
+
+        sr = GetComponentsInChildren<SpriteRenderer>();
+
         if (flyForwards)
         {
-            transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            foreach (SpriteRenderer sprite in sr)
+            {
+                sprite.flipX = !sprite.flipX;
+            }
         }
 
         nextDrop = Random.Range(minBombInterval, maxBombInterval);
@@ -44,8 +51,11 @@ public class BirdEnemy : MonoBehaviour {
         if(pathTime <= 0)
         {
             pathTime = pathDuration;
-            transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
-            flySpeed = flyForwards ? flySpeed : -flySpeed;
+            foreach (SpriteRenderer sprite in sr)
+            {
+                sprite.flipX = !sprite.flipX;
+            }
+            flySpeed = -flySpeed;
         }        
 
         transform.Translate(flySpeed, 0, 0);
@@ -54,7 +64,7 @@ public class BirdEnemy : MonoBehaviour {
     public void DropBomb()
     {
         BombTrap drop = Instantiate(bombPrefab);
-        drop.transform.parent = transform;
+        drop.transform.parent = null;
         drop.transform.position = transform.position;
         drop.countdownTime = Random.Range(bombTimerMin, bombTimerMax);
         drop.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitCircle * bombThrowForce);

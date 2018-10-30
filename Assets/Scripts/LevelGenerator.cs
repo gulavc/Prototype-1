@@ -7,6 +7,8 @@ public class LevelGenerator : MonoBehaviour {
     
     public Level[] levelPool;
 
+    public Level victoryLevel;
+
     private LinkedList<Level> currentLevel;
     private GameManager gm;
 
@@ -47,7 +49,7 @@ public class LevelGenerator : MonoBehaviour {
             fixedOrder++;
             return levelPool[value];            
         }
-        else if(SeedHolder.Seed <= levelPool.Length)
+        else if(SeedHolder.Seed <= levelPool.Length && SeedHolder.Seed > 0)
         {
             return levelPool[SeedHolder.Seed - 1];
         }

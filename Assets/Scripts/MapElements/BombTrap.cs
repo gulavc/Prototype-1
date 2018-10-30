@@ -44,7 +44,8 @@ public class BombTrap : Trap {
 
     public void DeactivateTrap()
     {
-        this.gameObject.SetActive(false);
+        //this.gameObject.SetActive(false);
+        Destroy(this.gameObject);
     }
 
     public void HitPlayer()

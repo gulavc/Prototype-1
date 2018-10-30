@@ -549,6 +549,9 @@ MonoBehaviour:
   - {fileID: 114116126908639514, guid: 3c2f1a4a28be6d8458c039ffd5c58fdf, type: 2}
   - {fileID: 114165825099306518, guid: f97e53625cfae5942be0a52a138c27dc, type: 2}
   - {fileID: 114113067117613036, guid: 62981017aa9302f4e82774a0119f61a2, type: 2}
+  - {fileID: 114218106643628974, guid: d10b3f81f2111c8409d6bf35649b87b4, type: 2}
+  - {fileID: 114065780459227536, guid: 71c60870b5c20034aa228f5871ccb8df, type: 2}
+  victoryLevel: {fileID: 0}
 --- !u!1 &421967520
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,7 +570,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &421967521
 MonoBehaviour:
   m_ObjectHideFlags: 0
