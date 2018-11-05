@@ -426,6 +426,7 @@ MonoBehaviour:
   lg: {fileID: 370746916}
   gameOverUI: {fileID: 541633497}
   gameUI: {fileID: 421967525}
+  levelLength: 5
 --- !u!4 &370746914
 Transform:
   m_ObjectHideFlags: 0
@@ -551,7 +552,9 @@ MonoBehaviour:
   - {fileID: 114113067117613036, guid: 62981017aa9302f4e82774a0119f61a2, type: 2}
   - {fileID: 114218106643628974, guid: d10b3f81f2111c8409d6bf35649b87b4, type: 2}
   - {fileID: 114065780459227536, guid: 71c60870b5c20034aa228f5871ccb8df, type: 2}
-  victoryLevel: {fileID: 0}
+  - {fileID: 114739496899389802, guid: c49ca13cc11b94f42be8e240632b5aae, type: 2}
+  victoryLevel: {fileID: 114211315607062060, guid: 181b0faccf3c9034da3f7cc7757421ca,
+    type: 2}
 --- !u!1 &421967520
 GameObject:
   m_ObjectHideFlags: 0

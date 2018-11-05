@@ -35,6 +35,11 @@ public class LevelGenerator : MonoBehaviour {
                 {
                     l.lt.hasTransitionedIntoLevel = false;
                     gm.spawnPoint = l.spawnPoint;
+
+                    if (l.lt.victory == true)
+                    {
+                        gm.GameOver(true);
+                    }
                 }
             }
         }
@@ -61,28 +66,42 @@ public class LevelGenerator : MonoBehaviour {
     }
 
 
-    public void GenerateInitialMap()
+    public void GenerateInitialMap(int levelLength = 5)
     {
 
         LevelHolder = new GameObject("level holder");
+        Level l;
 
-        for(int i = 0; i < 5; ++i)
+        for (int i = 0; i < levelLength; ++i)
         {            
-            Level l = Instantiate(GetRandomLevel());
+            l = Instantiate(GetRandomLevel());
             if(currentLevel.Count > 0)
             {                
                 l.transform.position = currentLevel.Last.Value.endPoint.position;
             }
             else
             {
-                l.transform.position = Vector3.zero;
-                gm.spawnPoint = l.spawnPoint;
+                l.transform.position = Vector3.zero;                
             }
 
             l.transform.parent = LevelHolder.transform;
             currentLevel.AddLast(l);
 
         }
+
+        l = Instantiate(victoryLevel);
+        if (currentLevel.Count > 0)
+        {
+            l.transform.position = currentLevel.Last.Value.endPoint.position;
+        }
+        else
+        {
+            l.transform.position = Vector3.zero;
+        }
+        l.transform.parent = LevelHolder.transform;
+        currentLevel.AddLast(l);
+
+        gm.spawnPoint = currentLevel.First.Value.spawnPoint;
     }
 
     public void ClearLevel()

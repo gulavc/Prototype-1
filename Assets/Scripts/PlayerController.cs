@@ -119,7 +119,7 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetButtonUp("Dash"))
         {
-            if (currentBoost > 0)
+            if (currentBoost > 0 && isDashing)
             {
                 Dash(false);
             }
@@ -194,7 +194,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        numJumps = 0;
+        if (collision.collider.gameObject.tag == "Ground")
+        {
+            numJumps = 0;
+        }
     }
 
     private void HandleDashReset()
@@ -239,10 +242,17 @@ public class PlayerController : MonoBehaviour
 
     public void ResetPosition(Vector2 offset)
     {
+        isDashDecreasing = false;
+        isDashing = false;
+        dashFlames.SetActive(false);
+
+
         this.transform.Translate(offset, Space.World);
         this.transform.rotation = Quaternion.identity;
         rb.freezeRotation = true;
         rb.freezeRotation = false;
+        maxSpeed = DefaultMaxSpeed;
+        maxBackSpeed = DefaultMaxBackSpeed;
     }
 
     private void Dash(bool status)
@@ -261,7 +271,20 @@ public class PlayerController : MonoBehaviour
         currentBoost = Mathf.Clamp(currentBoost += value, 0, maxBoost);
     }
 
-    //Gettersd & setters
+    public void Freeze(bool value)
+    {
+        if (value)
+        {
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
+        else
+        {
+            rb.constraints = RigidbodyConstraints2D.None;
+        }
+        
+    }
+
+    //Getters & setters
     public float MaxSpeed {
         get; set;
     }
@@ -298,11 +321,5 @@ public class PlayerController : MonoBehaviour
     public float GetCurrentBoostPercent()
     {
         return currentBoost / maxBoost * 100f;
-    }
-
-    public void Freeze()
-    {
-
-        //ignoreInputs = true;
     }
 }

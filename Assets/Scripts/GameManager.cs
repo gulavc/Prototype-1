@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour {
     public GameOverUI gameOverUI;
     public UIManager gameUI;
 
+    public int levelLength;
+
     // Use this for initialization
     void Start () {       
         StartGame();
@@ -44,7 +46,7 @@ public class GameManager : MonoBehaviour {
 
     public void RespawnPlayer()
     {
-        player.enabled = true;
+        player.Freeze(false);
         player.transform.position = spawnPoint.position;
         player.ResetPosition(Vector2.zero);
         player.IsImmuneToDamage = false;
@@ -72,7 +74,7 @@ public class GameManager : MonoBehaviour {
     private void StartGame()
     {
         Random.InitState(SeedHolder.Seed);
-        lg.GenerateInitialMap();
+        lg.GenerateInitialMap(levelLength);
         RespawnPlayer();
                 
         gameUI.Hide(false);
@@ -82,16 +84,16 @@ public class GameManager : MonoBehaviour {
         player.CurrentBoost = player.maxBoost / 2f;
     }
 
-    private void GameOver(bool winGame)
+    public void GameOver(bool winGame)
     {
-        player.enabled = false;
+        player.Freeze(true);
         gameUI.Hide(true);
         gameOverUI.GameOver(winGame);
     }
 
     public void RestartGame()
     {
-        
+        Score = 0;
         lg.ClearLevel();
         StartGame();
     }
